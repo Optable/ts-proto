@@ -43,6 +43,10 @@ export function generateService(
   maybeAddComment(sourceInfo, (text) => (service = service.addJavadoc(text)));
 
   serviceDesc.method.forEach((methodDesc, index) => {
+    if (methodDesc.clientStreaming) {
+      return;
+    }
+
     if (options.lowerCaseServiceMethods) {
       methodDesc.name = camelCase(methodDesc.name);
     }
@@ -153,6 +157,10 @@ export function generateServiceClientImpl(
 
   // Create a method for each FooService method
   for (const methodDesc of serviceDesc.method) {
+    if (methodDesc.clientStreaming) {
+      continue;
+    }
+
     // See if this this fuzzy matches to a batchable method
     if (options.useContext) {
       const batchMethod = detectBatchMethod(typeMap, fileDesc, serviceDesc, methodDesc, options);
